@@ -193,7 +193,6 @@
           var self = $('.select-options', obj);
           var child = self.children();
           var singleHeight = child.outerHeight();
-          console.log(settings.displayLength);
           if (settings.displayLength) {
             self.css({'overflowY': 'scroll'}).stop().animate({'height': settings.displayLength * singleHeight});
           } else {
