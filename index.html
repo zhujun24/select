@@ -9,33 +9,22 @@
         }
 
         .demo {
-            width: 400px;
+            width: 481px;
+            position: relative;
             margin: 20px auto;
         }
     </style>
 </head>
 <body>
 <div class="demo"></div>
-<!--<div class="demo"></div>-->
-<!--<button onclick="$('.demo')[0].select.setOptions(['6666666', '777']);">setOptions</button>-->
 <button onclick="console.log($('.demo')[0].select.getOptions());">getOptions</button>
 <script src="//cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
 <script src="select.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        var hehe = function (data) {
-//            console.log(data);
-//            $('.demo')[0].select.addOptions([data]);
-        };
-        $('.demo').Select({
-            options: ['元素前后添加内', '元添加内', '元素后添加内', '添加内', '加内', '元素后1添加内', '元前后添'],
-            callback: hehe,
-            callbackTimer: 10,
-            placeholder: '请输入啥啥啥',
-            placeholder: '请输入',
-            afterOpen: true,
-            limit: 5,
-            displayLength: 0
+        $('.demo').Select1({
+            containerCls: 'demo',
+            options: ['方的负', '豆腐豆腐', '头疼33', '千万44', '打的打飞', '哦喂喂', '1对的负担', '豆腐豆腐', '3放33', '千万44', '的打飞55', '哦喂', '方的负担', '腐豆腐', '让人头疼33', '千万千万', '飞的55', '哦喂喂喂']
         });
     });
 </script>
