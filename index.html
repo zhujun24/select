@@ -8,7 +8,7 @@
             margin: 0;
         }
 
-        .demo {
+        .demo, .demo2 {
             width: 481px;
             position: relative;
             margin: 20px auto;
@@ -22,10 +22,13 @@
 <script src="select.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.demo').Select1({
-            containerCls: 'demo',
+        $('.demo:eq(0)').Select1({
+            containerSelector: '.demo:eq(0)',
             options: ['方的负', '豆腐豆腐', '头疼33', '千万44', '打的打飞', '哦喂喂', '1对的负担', '豆腐豆腐', '3放33', '千万44', '的打飞55', '哦喂', '方的负担', '腐豆腐', '让人头疼33', '千万千万', '飞的55', '哦喂喂喂']
         });
+        setInterval(function () {
+            console.log($('.demo')[0].select.getOptions());
+        }, 2000);
     });
 </script>
 </body>

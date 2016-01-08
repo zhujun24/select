@@ -1,19 +1,20 @@
-(function($) {
-  $.fn.Select1 = function(options) {
+(function ($) {
+  $.fn.Select1 = function (options) {
     var settings = $.extend({
-      containerCls: '',
-      options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee']
+      containerSelector: '',
+      options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee'],
+      limit: 2
     }, options);
 
-    this.each(function() {
+    this.each(function () {
       var obj = $(this);
       obj.selected = [];
       this.select = {
-        createElems: function() {
+        createElems: function () {
           $('<div class="select-content"><ul class="selected-options"></ul><div class="switch"><div></div></div></div>').appendTo(obj);
           obj.selectOptionsUl = $('<ul class="select-options"></ul>').appendTo(obj);
           obj.placeholder = $('<p class="placeholder">选择云单分类，最多选两个</p>').appendTo('.selected-options', obj);
-          $(settings.options).each(function(index, element) {
+          $(settings.options).each(function (index, element) {
             var remain = index % 3;
             var liCls = '';
             if (remain === 0) {
@@ -26,10 +27,10 @@
           this.addEvent();
         },
 
-        addEvent: function() {
+        addEvent: function () {
           //options click
           var self = this;
-          $('.select-options').delegate("li", "click", function() {
+          $('.select-options', obj).delegate("li", "click", function () {
             var _self = $(this);
             var value = _self.html();
             if (_self.hasClass('selected')) {
@@ -48,7 +49,7 @@
           });
 
           //switch options open button
-          $('.switch').click(function(event) {
+          $('.switch', obj).click(function (event) {
             if ($(this).hasClass('open')) {
               self.closeOptions();
             } else {
@@ -58,10 +59,8 @@
           });
 
           //when click out of select,close options
-          $(document).click(function(event) {
-            var clickTargetCls = $(event.target).parent().attr('class') || '';
-            var allParentCls = "," + settings.containerCls + ",select1,selected-options,select-options,select-content";
-            if (allParentCls.indexOf(clickTargetCls) > 0) {
+          $(document).click(function (event) {
+            if ($(event.target).parents(settings.containerSelector).length) {
               self.openOptions();
             } else {
               self.closeOptions();
@@ -69,8 +68,8 @@
           });
         },
 
-        isLimit: function() {
-          if ($('.selected-options', obj).find('li').length === 2) {
+        isLimit: function () {
+          if ($('.selected-options', obj).find('li').length === settings.limit) {
             console.log('selected options beyond limit');
             return false;
           } else {
@@ -78,13 +77,13 @@
           }
         },
 
-        addSelected: function(text) {
+        addSelected: function (text) {
           $('.selected-options', obj).append('<li>' + text + '</li>');
           obj.selected.push(text);
         },
 
-        removeSelected: function(text) {
-          $('.selected-options>li', obj).each(function(index, element) {
+        removeSelected: function (text) {
+          $('.selected-options>li', obj).each(function (index, element) {
             if ($(element).html() === text) {
               element.remove();
               obj.selected.splice(index, 1);
@@ -93,25 +92,28 @@
           });
         },
 
-        openOptions: function() {
-          $('.switch').addClass('open');
-          $('.select-options', obj).stop().animate({
-            'height': 222
-          });
+        openOptions: function () {
+          $('.switch', obj).addClass('open');
+          var el = $('.select-options', obj),
+            curHeight = el.height(),
+            autoHeight = el.css('height', 'auto').height();
+          el.stop().height(curHeight).animate({
+            height: autoHeight
+          }, 300);
         },
 
-        closeOptions: function() {
-          $('.switch').removeClass('open');
+        closeOptions: function () {
+          $('.switch', obj).removeClass('open');
           $('.select-options', obj).stop().animate({
-            'height': 0
-          });
+            height: 0
+          }, 300);
         },
 
-        getOptions: function() {
+        getOptions: function () {
           return obj.selected;
         },
 
-        init: function() {
+        init: function () {
           var O = this;
           O.createElems();
           return O
