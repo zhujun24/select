@@ -17,11 +17,12 @@
     margin-top: -1px;
     border: solid #6d6d6d 1px;
     border-top: none;
+    background-color: #fff;
 }
 
 .select-options-padding {
-    padding: 5px;
-    width: 468px;
+    padding: 8px;
+    width: 462px;
 }
 
 .select-options-padding > span {
@@ -64,12 +65,14 @@
     height: 38px;
     border: none;
     padding: 0;
+    background-color: #fff;
 }
 
 .selected-options > li > p {
     display: inline-block;
     line-height: 24px;
     color: #53a4d3;
+    float: left;
 }
 
 .selected-options > li > p.select-cancel {
@@ -86,5 +89,5 @@
     border: none;
     outline: none;
     font-size: 14px;
-    /*background-color: pink;*/
+    line-height: 38px;
 }

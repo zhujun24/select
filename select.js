@@ -10,6 +10,19 @@
       singleLength: 4
     }, options);
 
+    if (!Array.prototype.indexOf) {
+      //Fuck IE7/8
+      Array.prototype.indexOf = function (elt) {
+        var len = this.length >>> 0;
+        for (var i = 0; i < len; i++) {
+          if (i in this && this[i] === elt)
+            return i;
+        }
+        return -1;
+      };
+    }
+
+
     this.each(function () {
       var obj = $(this);
       obj.selected = [];
@@ -139,9 +152,9 @@
 
         togglePlaceholder: function () {
           if (obj.selected.length) {
-            $('.search-input', obj).attr('placeholder', '');
+            $('.search-input', obj).width(56).attr('placeholder', '');
           } else {
-            $('.search-input', obj).attr('placeholder', settings.placeholder);
+            $('.search-input', obj).width(468).attr('placeholder', settings.placeholder);
           }
         },
 

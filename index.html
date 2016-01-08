@@ -27,13 +27,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var hehe = function (data) {
-            console.log(data);
+//            console.log(data);
 //            $('.demo')[0].select.addOptions([data]);
         };
         $('.demo:eq(0)').Select2({
             containerSelector: '..demo:eq(0)',
             placeholder: '输入二级分类，每个分类最多四个字，空格分割，最多写五个',
-            options: ['元素加内', '元添加内', '元添加内', '添加内内', '加内内内', '元素加内', '元前后添'],
+            options: ['元素1内', '2添加内', '3添加内', '4加内内', '5内内内', '6素加内', '元7后添'],
             callback: hehe,
             callbackTimer: 300
         });
