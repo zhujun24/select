@@ -1,52 +1,31 @@
 (function ($) {
-  $.fn.Select = function (options) {
-    // This is the easiest way to have default options.
+  $.fn.Select2 = function (options) {
     var settings = $.extend({
-      placeholder: '',
+      containerSelector: '',
+      placeholder: 'Please enter...',
       options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee', 'fffffff', '11111111', '22222222', '333333'],
       callback: null,
       callbackTimer: 0,
-      limit: 0,
-      afterOpen: false,
-      displayLength: 0
+      limit: 5,
+      singleLength: 4
     }, options);
 
-    var testVar = function (Var) {
-      return Object.prototype.toString.call(Var).slice(8, -1);
-    };
-
     this.each(function () {
-      var obj = $(this); // the original select object.
-      obj.css({'position': 'relative'});
-
+      var obj = $(this);
+      obj.selected = [];
       this.select = {
-
         createElems: function () {
-          obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input class="search-input" type="text"></li></ul></div>').appendTo(obj);
-          this.createUl();
+          obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input placeholder="' + settings.placeholder + '" class="search-input" type="text"></li></ul></div>').appendTo(obj);
+          obj.selectOptions = $('<div class="select-options"></div>').appendTo(obj);
+          obj.selectOptionsDiv = $('<div class="select-options-padding"><span>推荐标签：</span></div>').appendTo(obj.selectOptions);
           this.createLi(settings.options);
-          $('.select-options', obj).height(0);
-          settings.placeholder && this.createPlaceHolder(settings.placeholder);
-          this.setInputWidth($('.search-input', obj));
           this.addEvent();
-        },
-
-        createUl: function () {
-          if (!obj.selectOptionsUl) {
-            obj.selectOptionsUl = $('<ul class="select-options"></ul>').appendTo(obj);
-          }
         },
 
         createLi: function (arr) {
           $(arr).each(function (index, element) {
-            $('<li>' + element + '</li>').appendTo(obj.selectOptionsUl);
+            $('<span class="select-option">' + element + '</span>').appendTo(obj.selectOptionsDiv);
           });
-        },
-
-        createPlaceHolder: function (placeholder) {
-          obj.append('<p class="select-placeholder">' + placeholder + '</p>');
-          var placeHolder = $('.select-placeholder', obj);
-          placeHolder.width(placeHolder.parent().width() - 10);
         },
 
         addEvent: function () {
@@ -54,70 +33,43 @@
           var self = this;
 
           var searchInput = $('.search-input', obj);
-          $('.select-options').delegate("li", "click", function () {
+          $('.select-options-padding').delegate(".select-option", "click", function () {
             var _self = $(this);
-            if (!_self.hasClass('selected')) {
-              if (self.isLimit()) {
-                _self.addClass('selected');
-                self.addSelected(_self.html());
-              }
-              $(searchInput).val('').focus();
-              self.setInputWidth(searchInput);
-              $('.select-placeholder', obj).addClass('hide');
-              !!settings.afterOpen && self.optionsOpen();
-            }
+            self.addSelected(_self.html());
+            $(searchInput).val('').focus();
           });
 
           //delete selected option
-          $('.select-content').delegate(".select-cancel", "click", function () {
+          $('.select-content').delegate(".select-cancel", "click", function (event) {
             var _self = $(this);
             var selectedText = _self.prev().html();
             _self.parent().remove();
-            self.setInputWidth(searchInput);
-            obj.selectOptionsUl.find('li').each(function (index, element) {
-              var optionsVal = $(element).html();
-              if (optionsVal === selectedText) {
-                obj.selectOptionsUl.find('li').eq(index).removeClass('selected');
-                return false;
-              }
-            });
+            obj.selected.splice(obj.selected.indexOf(selectedText), 1);
+            self.togglePlaceholder();
+            event.stopPropagation();
+            self.openOptions();
           });
 
-          //input backspace when value is null
+          //input backspace & enter when value is null
           $(searchInput).keydown(function (e) {
             var _self = $(this);
             var value = $.trim(_self.val());
             if (!value && e.keyCode == 8) {
               _self.parent().prev().find('.select-cancel').click();
-            }
-            if (value && (e.keyCode == 13 || e.keyCode == 32)) {
-              if (self.isLimit()) {
-                self.addSelected(value);
-              }
+              self.openOptions();
+            } else if (value && (e.keyCode == 13 || e.keyCode == 32)) {
+              self.addSelected(value);
               _self.val('');
-            }
-          });
-
-          $(searchInput).blur(function () {
-            self.optionsClose();
-            $(this).val('');
-            if (!$(this).parent().prev().length) {
-              $('.select-placeholder', obj).removeClass('hide');
             }
           });
 
           //update input width
           $(searchInput).bind('input propertychange', function () {
             var _self = $(this);
-
-            var sensor = $('<pre>' + _self.val() + '</pre>').css({display: 'none', fontSize: '14px'});
-            $('body').append(sensor);
-            var width = sensor.width();
-            sensor.remove();
-            if (_self.width() - width < 3) {
-              _self.width(width + 3);
+            var value = $.trim(_self.val());
+            if (value.length > settings.singleLength) {
+              _self.val(value.substr(0, settings.singleLength));
             }
-
             if (settings.callback) {
               if (settings.callbackTimer) {
                 clearTimeout(searchInput.timer);
@@ -130,23 +82,18 @@
             }
           });
 
-          //placeholder
-          $('.select-placeholder', obj).click(function () {
-            $(this).addClass('hide');
-            $('.search-input', obj).focus();
-            self.optionsOpen();
-          });
-
-          $('.select-content', obj).click(function () {
-            $('.search-input').focus();
-            $('.select-placeholder', obj).addClass('hide');
-            self.optionsOpen();
+          //when click out of select,close options
+          $(document).click(function (event) {
+            if ($(event.target).parents(settings.containerSelector).length) {
+              self.openOptions();
+            } else {
+              self.closeOptions();
+            }
           });
         },
 
         isLimit: function () {
-          var isLimit = settings.limit ? $('.selected-options', obj).find('li').length - settings.limit : 0;
-          if (isLimit > 0) {
+          if ($('.selected-options', obj).find('li').length === settings.limit + 1) {
             console.log('selected options beyond limit');
             return false;
           } else {
@@ -155,57 +102,47 @@
         },
 
         addSelected: function (text) {
-          $('.search-input-wrap', obj).before('<li><p>' + text + '</p><p class="select-cancel">&nbsp;X</p></li>');
-        },
-
-        addOptions: function (options) {
-          if (testVar(options) !== 'Array') {
-            console.log('options must be a Array!');
-            return false;
+          if (this.isLimit() && obj.selected.indexOf(text) === -1) {
+            obj.selected.push(text);
+            $('.search-input-wrap', obj).before('<li><p>' + text + '</p><p class="select-cancel">&nbsp;X</p></li>');
+          } else {
+            console.log('This tag has added');
           }
-          this.createLi(options);
-          this.optionsOpen()
+          this.togglePlaceholder();
         },
 
         setOptions: function (options) {
-          if (testVar(options) !== 'Array') {
-            console.log('options must be a Array!');
-            return false;
-          }
-          obj.selectOptionsUl.children().remove();
+          obj.selectOptionsDiv.find('.select-option').remove();
           this.createLi(options);
-          this.optionsOpen();
+          this.openOptions();
         },
 
         getOptions: function () {
-          var selected = $('.selected-options', obj).find('li');
-          var result = [];
-          selected.each(function (index, element) {
-            if (selected.length === index + 1) {
-              return false;
-            }
-            result.push($(element).find('p:first').html());
-          });
-          return result;
+          return obj.selected;
         },
 
-        optionsOpen: function () {
-          var self = $('.select-options', obj);
-          var child = self.children();
-          var singleHeight = child.outerHeight();
-          if (settings.displayLength) {
-            self.css({'overflowY': 'scroll'}).stop().animate({'height': settings.displayLength * singleHeight});
+        openOptions: function () {
+          $('.search-input', obj).focus();
+          var el = $('.select-options', obj),
+            curHeight = el.height(),
+            autoHeight = el.css('height', 'auto').height();
+          el.stop().height(curHeight).animate({
+            height: autoHeight
+          }, 300);
+        },
+
+        closeOptions: function () {
+          $('.select-options', obj).stop().animate({
+            height: 0
+          }, 300);
+        },
+
+        togglePlaceholder: function () {
+          if (obj.selected.length) {
+            $('.search-input', obj).attr('placeholder', '');
           } else {
-            self.css({'overflowY': 'hidden'}).stop().animate({'height': child.length * singleHeight});
+            $('.search-input', obj).attr('placeholder', settings.placeholder);
           }
-        },
-
-        optionsClose: function () {
-          $('.select-options', obj).stop().animate({'height': 0});
-        },
-
-        setInputWidth: function (input) {
-          input.width(1);
         },
 
         init: function () {
