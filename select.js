@@ -85,7 +85,7 @@
         removeSelected: function (text) {
           $('.selected-options>li', obj).each(function (index, element) {
             if ($(element).html() === text) {
-              element.remove();
+              $(element).remove();
               obj.selected.splice(index, 1);
               return false;
             }
