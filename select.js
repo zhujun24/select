@@ -10,7 +10,6 @@
       singleLength: 4
     }, options);
 
-
     // For IE7/8 Array indexOf
     // Production steps of ECMA-262, Edition 5, 15.4.4.14
     // Reference: http://es5.github.io/#x15.4.4.14
@@ -101,8 +100,8 @@
         addEvent: function () {
           //options click
           var self = this;
-
           var searchInput = $('.search-input', obj);
+          searchInput.oldValue = '';
           $('.select-options-padding').delegate(".select-option", "click", function () {
             var _self = $(this);
             self.addSelected(_self.html());
@@ -110,7 +109,7 @@
           });
 
           //delete selected option
-          $('.select-content').delegate(".select-cancel", "click", function (event) {
+          $('.select-content').delegate(".select-cancel", "click", function () {
             var _self = $(this);
             var selectedText = _self.prev().html();
             _self.parent().remove();
@@ -120,40 +119,46 @@
           });
 
           //input backspace & enter when value is null
-          $(searchInput).keydown(function (e) {
-            var _self = $(this);
-            var value = $.trim(_self.val());
+          searchInput.keydown(function (e) {
+            var value = $.trim(searchInput.val());
             if (!value && e.keyCode == 8) {
-              _self.parent().prev().find('.select-cancel').click();
+              searchInput.parent().prev().find('.select-cancel').click();
               self.openOptions();
             } else if (value && (e.keyCode == 13 || e.keyCode == 32)) {
               self.addSelected(value);
-              _self.val('');
+              searchInput.val('');
             }
           });
 
           //update input width
-          $(searchInput).bind('input propertychange', function () {
-            var _self = $(this);
-            var value = $.trim(_self.val());
+          searchInput.bind('input propertychange', function () {
+            var value = $.trim(searchInput.val());
             if (value.length > settings.singleLength) {
-              _self.val(value.substr(0, settings.singleLength));
+              value = value.substr(0, settings.singleLength);
             }
-            if (settings.callback) {
-              if (settings.callbackTimer) {
-                clearTimeout(searchInput.timer);
-                searchInput.timer = setTimeout(function () {
-                  settings.callback(_self.val());
-                }, settings.callbackTimer);
-              } else {
-                settings.callback(_self.val());
+            searchInput.val(value);
+            if (value !== searchInput.oldValue) {
+              searchInput.oldValue = value;
+              if (settings.callback) {
+                if (settings.callbackTimer) {
+                  clearTimeout(searchInput.timer);
+                  searchInput.timer = setTimeout(function () {
+                    settings.callback(value);
+                  }, settings.callbackTimer);
+                } else {
+                  settings.callback(value);
+                }
               }
             }
           });
 
           //when click out of select,close options
           $(document).click(function (event) {
-            if ($(event.target).parents(settings.containerSelector).length) {
+            var target = $(event.target);
+            if (target.hasClass('select-cancel')) {
+              return false;
+            }
+            if (target.parents(settings.containerSelector).length) {
               self.openOptions();
             } else {
               self.closeOptions();
@@ -165,9 +170,8 @@
           if ($('.selected-options', obj).find('li').length === settings.limit + 1) {
             console.log('selected options beyond limit');
             return false;
-          } else {
-            return true;
           }
+          return true;
         },
 
         addSelected: function (text) {
@@ -175,7 +179,7 @@
             obj.selected.push(text);
             $('.search-input-wrap', obj).before('<li><p>' + text + '</p><p class="select-cancel">&nbsp;X</p></li>');
           } else {
-            console.log('This tag has added');
+            console.log('This tag has added OR beyond limit');
           }
           this.togglePlaceholder();
         },

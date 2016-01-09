@@ -78,7 +78,7 @@
 .selected-options > li > p.select-cancel {
     font-size: 12px;
     color: #53a4d3;
-    cursor: default;
+    cursor: pointer;
 }
 
 .search-input {
