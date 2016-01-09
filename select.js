@@ -55,12 +55,16 @@
             } else {
               self.openOptions();
             }
-            event.stopPropagation();
+            //event.stopPropagation();
           });
 
           //when click out of select,close options
           $(document).click(function (event) {
-            if ($(event.target).parents(settings.containerSelector).length) {
+            var target = $(event.target);
+            if ($(target).hasClass('switch') || $(target).parent().hasClass('switch')) {
+              return false;
+            }
+            if ($(target).parents(settings.containerSelector).length) {
               self.openOptions();
             } else {
               self.closeOptions();
