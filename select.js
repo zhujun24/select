@@ -116,7 +116,6 @@
             _self.parent().remove();
             obj.selected.splice(obj.selected.indexOf(selectedText), 1);
             self.togglePlaceholder();
-            event.stopPropagation();
             self.openOptions();
           });
 
