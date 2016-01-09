@@ -55,16 +55,15 @@
             } else {
               self.openOptions();
             }
-            //event.stopPropagation();
           });
 
           //when click out of select,close options
           $(document).click(function (event) {
             var target = $(event.target);
-            if ($(target).hasClass('switch') || $(target).parent().hasClass('switch')) {
+            if (target.hasClass('switch') || target.parent().hasClass('switch')) {
               return false;
             }
-            if ($(target).parents(settings.containerSelector).length) {
+            if (target.parents(settings.containerSelector).length) {
               self.openOptions();
             } else {
               self.closeOptions();
@@ -76,9 +75,8 @@
           if ($('.selected-options', obj).find('li').length === settings.limit) {
             console.log('selected options beyond limit');
             return false;
-          } else {
-            return true;
           }
+          return true;
         },
 
         addSelected: function (text) {
