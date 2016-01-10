@@ -2,6 +2,7 @@
   $.fn.Select1 = function (options) {
     var settings = $.extend({
       containerSelector: '',
+      selected: [],
       options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee'],
       limit: 2
     }, options);
@@ -11,6 +12,7 @@
       obj.selected = [];
       this.select = {
         createElems: function () {
+          var self = this;
           $('<div class="select-content"><ul class="selected-options"></ul><div class="switch"><div></div></div></div>').appendTo(obj);
           obj.selectOptionsUl = $('<ul class="select-options"></ul>').appendTo(obj);
           obj.placeholder = $('<p class="placeholder">选择云单分类，最多选两个</p>').appendTo('.selected-options', obj);
@@ -22,9 +24,23 @@
             } else if (remain === 2) {
               liCls = 'right';
             }
-            $('<li class="' + liCls + '">' + element + '</li>').appendTo(obj.selectOptionsUl);
+            $('<li data-id="' + element.id + '" class="' + liCls + '">' + element.name + '</li>').appendTo(obj.selectOptionsUl);
           });
           this.addEvent();
+          //init selected
+          if (settings.selected.length) {
+            $('.select-options>li', obj).each(function (index, element) {
+              var _self = $(element);
+              var _selfId = _self.data('id');
+              $(settings.selected).each(function (index2, element2) {
+                if (element2.id === _selfId) {
+                  _self.click();
+                  self.closeOptions();
+                  return false;
+                }
+              });
+            });
+          }
         },
 
         addEvent: function () {
@@ -32,10 +48,13 @@
           var self = this;
           $('.select-options', obj).delegate("li", "click", function () {
             var _self = $(this);
-            var value = _self.html();
+            var data = {
+              name: _self.html(),
+              id: _self.data('id')
+            };
             if (_self.hasClass('selected')) {
               _self.removeClass('selected');
-              self.removeSelected(value);
+              self.removeSelected(data);
               if (!obj.selected.length) {
                 obj.placeholder.removeClass('hide');
               }
@@ -43,7 +62,7 @@
               if (self.isLimit()) {
                 obj.placeholder.addClass('hide');
                 _self.addClass('selected');
-                self.addSelected(value);
+                self.addSelected(data);
               }
             }
           });
@@ -79,14 +98,14 @@
           return true;
         },
 
-        addSelected: function (text) {
-          $('.selected-options', obj).append('<li>' + text + '</li>');
-          obj.selected.push(text);
+        addSelected: function (data) {
+          $('.selected-options', obj).append('<li>' + data.name + '</li>');
+          obj.selected.push(data);
         },
 
-        removeSelected: function (text) {
+        removeSelected: function (data) {
           $('.selected-options>li', obj).each(function (index, element) {
-            if ($(element).html() === text) {
+            if ($(element).html() === data.name) {
               $(element).remove();
               obj.selected.splice(index, 1);
               return false;

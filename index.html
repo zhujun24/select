@@ -24,10 +24,33 @@
     $(document).ready(function () {
         $('.demo:eq(0)').Select1({
             containerSelector: '.demo:eq(0)',
-            options: ['方的负', '豆腐豆腐', '头疼33', '千万44', '打的打飞', '哦喂喂', '1对的负担', '豆腐豆腐', '3放33', '千万44', '的打飞55', '哦喂', '方的负担', '腐豆腐', '让人头疼33', '千万千万', '飞的55', '哦喂喂喂']
+            selected: [
+                {name: '方的负2', id: 2},
+                {name: '方的负6', id: 6}
+            ],
+            options: [
+                {name: '方的负1', id: 1},
+                {name: '方的负2', id: 2},
+                {name: '方的负3', id: 3},
+                {name: '方的负4', id: 4},
+                {name: '方的负5', id: 5},
+                {name: '方的负6', id: 6},
+                {name: '方的负7', id: 7},
+                {name: '方的负8', id: 8},
+                {name: '方的负9', id: 9},
+                {name: '方的负10', id: 10},
+                {name: '方的负11', id: 11},
+                {name: '方的负12', id: 12},
+                {name: '方的负13', id: 13},
+                {name: '方的负14', id: 14},
+                {name: '方的负15', id: 15},
+                {name: '方的负16', id: 16},
+                {name: '方的负17', id: 17},
+                {name: '方的负18', id: 18}
+            ]
         });
         setInterval(function () {
-            console.log($('.demo')[0].select.getOptions());
+//            console.log($('.demo')[0].select.getOptions());
         }, 2000);
     });
 </script>
