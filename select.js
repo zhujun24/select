@@ -3,7 +3,20 @@
     var settings = $.extend({
       containerSelector: '',
       selected: [],
-      options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee'],
+      options: [
+        {name: '方的负1', id: 1},
+        {name: '方的负2', id: 2},
+        {name: '方的负3', id: 3},
+        {name: '方的负4', id: 4},
+        {name: '方的负5', id: 5},
+        {name: '方的负6', id: 6},
+        {name: '方的负7', id: 7},
+        {name: '方的负8', id: 8},
+        {name: '方的负9', id: 9},
+        {name: '方的负10', id: 10},
+        {name: '方的负11', id: 11},
+        {name: '方的负12', id: 12}
+      ],
       limit: 2
     }, options);
 
