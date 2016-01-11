@@ -10,7 +10,7 @@
 
         .demo {
             width: 480px;
-            height: 50px;
+            /*height: 50px;*/
             position: relative;
             margin: 20px auto;
         }
@@ -18,7 +18,7 @@
 </head>
 <body>
 <div class="demo"></div>
-<button onclick="$('.demo')[0].select.setOptions(['11', '222', '3333', '444','5555', '666', '7777', '88', '9999']);">
+<button onclick="$('.demo')[0].select.setOptions([{name: '方的负22', id: 22},{name: '方的负23', id: 23},{name: '方的负33', id: 33},{name: '方的负35', id: 35},{name: '方的负38', id: 38},{name: '方的负311', id: 311},{name: '方的负313', id: 313},{name: '方的负316', id: 316},{name: '方的负318', id: 318}]);">
     setOptions
 </button>
 <button onclick="console.log($('.demo')[0].select.getOptions());">getOptions</button>
@@ -27,12 +27,17 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var hehe = function (data) {
-            console.log(data);
+//            console.log(data);
 //            $('.demo')[0].select.addOptions([data]);
         };
         $('.demo:eq(0)').Select2({
             containerSelector: '..demo:eq(0)',
             placeholder: '输入二级分类，每个分类最多四个字，空格分割，最多写五个',
+            selected: [
+                {name: '方的负2', id: 2},
+                {name: '方的负3', id: 3},
+                {name: '方的负8', id: 8}
+            ],
             selected: [
                 {name: '方的负2', id: 2},
                 {name: '方的负3', id: 3},

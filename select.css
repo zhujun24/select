@@ -3,7 +3,7 @@
     background-color: #fff;
     position: relative;
     z-index: 2;
-    height: 48px;
+    /*height: 48px;*/
     font-family: arial;
     overflow: hidden;
 }
@@ -39,8 +39,8 @@
 }
 
 .selected-options {
-    width: 968px;
-    height: 38px;
+    width: 468px;
+    /*height: 38px;*/
     display: block;
     /*overflow: hidden;*/
     margin: 5px;
@@ -85,9 +85,10 @@
     width: 468px;
     height: 38px;
     display: block;
-    padding: 0px 4px;
+    /*padding: 0px 4px;*/
     border: none;
     outline: none;
     font-size: 14px;
     line-height: 38px;
+    /*background: pink;*/
 }

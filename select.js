@@ -14,8 +14,8 @@
       ],
       callback: null,
       callbackTimer: 0,
-      limit: 5,
-      singleLength: 4
+      limit: 99,
+      singleLength: 4444
     }, options);
 
     // For IE7/8 Array indexOf
@@ -63,9 +63,11 @@
           this.addEvent();
           //init selected
           if (settings.selected.length) {
-            $(settings.selected).each(function (index2, element2) {
-              self.addSelected(element2);
-            });
+            self.setSelected(settings.selected);
+            //$(settings.selected).each(function (index2, element2) {
+            //  self.addSelected(element2);
+            //  self.inputAutoWidth($('.search-input', obj));
+            //});
           }
         },
 
@@ -87,7 +89,8 @@
                 id: _self.data('id')
               }
             );
-            $(searchInput).val('');
+            //$(searchInput).val('');
+            self.inputAutoWidth(searchInput);
           });
 
           //delete selected option
@@ -95,53 +98,45 @@
             var _self = $(this);
             var selectedText = _self.prev().html();
             _self.parent().remove();
+            if (obj.selected.length === 1) {
+              self.togglePlaceholder(true);
+            }
             self.delSelected(selectedText);
-            //obj.selected.splice(obj.selected.indexOf(selectedText), 1);
-            self.togglePlaceholder();
-            self.openOptions();
           });
 
           //input backspace & enter when value is null
           searchInput.keydown(function (e) {
+            self.inputChange();
             var value = $.trim(searchInput.val());
             if (!value && e.keyCode == 8) {
-              searchInput.parent().prev().find('.select-cancel').click();
+              var prevObj = searchInput.parent().prev();
+              searchInput.val(prevObj.find('p:eq(0)').html());
+              prevObj.find('p:eq(1)').click();
               self.openOptions();
+              self.inputChange();
+              return false;
+
             } else if (value && (e.keyCode == 13 || e.keyCode == 32)) {
               self.addSelected({
                 name: value,
                 id: null
               });
               searchInput.val('');
+              self.inputAutoWidth(this);
+              return false;
             }
           });
 
           //update input width
           searchInput.bind('input propertychange', function () {
-            var value = $.trim(searchInput.val());
-            if (value.length > settings.singleLength) {
-              value = value.substr(0, settings.singleLength);
-              searchInput.val(value);
-            }
-            if (value !== searchInput.oldValue) {
-              searchInput.oldValue = value;
-              if (settings.callback) {
-                if (settings.callbackTimer) {
-                  clearTimeout(searchInput.timer);
-                  searchInput.timer = setTimeout(function () {
-                    settings.callback(value);
-                  }, settings.callbackTimer);
-                } else {
-                  settings.callback(value);
-                }
-              }
-            }
+            self.inputChange();
           });
 
           //when click out of select,close options
           $(document).click(function (event) {
             var target = $(event.target);
             if (target.hasClass('select-cancel')) {
+              searchInput.focus();
               return false;
             }
             if (target.parents(settings.containerSelector).length) {
@@ -150,6 +145,45 @@
               self.closeOptions();
             }
           });
+        },
+
+        inputChange: function () {
+          var searchInput = $('.search-input', obj);
+          var value = $.trim(searchInput.val());
+          if (value.length > settings.singleLength) {
+            value = value.substr(0, settings.singleLength);
+            searchInput.val(value);
+          }
+          //input callback
+          if (value !== searchInput.oldValue) {
+            searchInput.oldValue = value;
+            if (settings.callback) {
+              if (settings.callbackTimer) {
+                clearTimeout(searchInput.timer);
+                searchInput.timer = setTimeout(function () {
+                  settings.callback(value);
+                }, settings.callbackTimer);
+              } else {
+                settings.callback(value);
+              }
+            }
+          }
+          this.inputAutoWidth(searchInput);
+        },
+
+        inputAutoWidth: function (input, restWidth) {
+          var input = $(input);
+          var span = $('<span/>').css({
+            display: 'none',
+            fontSize: input.css('fontSize'),
+            fontFamily: input.css('fontFamily')
+          }).appendTo('body');
+          span.html(input.val().replace(/&/g, '&amp;').replace(/\s/g, '&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+          input.width(span.width() + (restWidth || 1));
+          if (!span.width()) {
+            this.togglePlaceholder();
+          }
+          span.remove();
         },
 
         isLimit: function () {
@@ -188,10 +222,10 @@
           $(obj.selected).each(function (index, element) {
             if (element.name === text) {
               obj.selected.splice(index, 1);
-              console.log(text + ' has added');
               return false;
             }
           });
+          this.inputAutoWidth();
         },
 
         setOptions: function (options) {
@@ -220,12 +254,21 @@
           }, 300);
         },
 
-        togglePlaceholder: function () {
-          if (obj.selected.length) {
-            $('.search-input', obj).width(56).attr('placeholder', '');
+        togglePlaceholder: function (hehe) {
+          if (obj.selected.length && !hehe) {
+            $('.search-input', obj).attr('placeholder', '');
           } else {
             $('.search-input', obj).width(468).attr('placeholder', settings.placeholder);
           }
+        },
+
+        setSelected: function (arr) {
+          var _self = this;
+          $('.search-input-wrap', obj).prevAll().remove();
+          $(arr).each(function (index, element) {
+            _self.addSelected(element);
+            _self.inputAutoWidth($('.search-input', obj));
+          });
         },
 
         init: function () {
