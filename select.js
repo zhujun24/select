@@ -64,10 +64,6 @@
           //init selected
           if (settings.selected.length) {
             self.setSelected(settings.selected);
-            //$(settings.selected).each(function (index2, element2) {
-            //  self.addSelected(element2);
-            //  self.inputAutoWidth($('.search-input', obj));
-            //});
           }
         },
 
@@ -264,6 +260,7 @@
 
         setSelected: function (arr) {
           var _self = this;
+          obj.selected = [];
           $('.search-input-wrap', obj).prevAll().remove();
           $(arr).each(function (index, element) {
             _self.addSelected(element);
