@@ -17,7 +17,7 @@
         {name: '方的负11', id: 11},
         {name: '方的负12', id: 12}
       ],
-      limit: 2
+      limit: 0
     }, options);
 
     this.each(function () {
@@ -104,6 +104,9 @@
         },
 
         isLimit: function () {
+          if (!settings.limit) {
+            return true;
+          }
           if ($('.selected-options', obj).find('li').length === settings.limit) {
             console.log('selected options beyond limit');
             return false;
