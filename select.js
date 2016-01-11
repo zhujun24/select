@@ -3,7 +3,15 @@
     var settings = $.extend({
       containerSelector: '',
       placeholder: 'Please enter...',
-      options: ['aaaaa', 'bbbbb', 'cccccc', 'ddddddd', 'eeeeeeee', 'fffffff', '11111111', '22222222', '333333'],
+      selected: [],
+      options: [
+        {name: '方的负1', id: 1},
+        {name: '方的负2', id: 2},
+        {name: '方的负3', id: 3},
+        {name: '方的负13', id: 13},
+        {name: '方的负16', id: 16},
+        {name: '方的负18', id: 18}
+      ],
       callback: null,
       callbackTimer: 0,
       limit: 5,
@@ -11,64 +19,27 @@
     }, options);
 
     // For IE7/8 Array indexOf
-    // Production steps of ECMA-262, Edition 5, 15.4.4.14
-    // Reference: http://es5.github.io/#x15.4.4.14
     // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
     if (!Array.prototype.indexOf) {
       Array.prototype.indexOf = function (searchElement, fromIndex) {
-
         var k;
-
-        // 1. Let o be the result of calling ToObject passing
-        //    the this value as the argument.
         if (this == null) {
           throw new TypeError('"this" is null or not defined');
         }
-
         var o = Object(this);
-
-        // 2. Let lenValue be the result of calling the Get
-        //    internal method of o with the argument "length".
-        // 3. Let len be ToUint32(lenValue).
         var len = o.length >>> 0;
-
-        // 4. If len is 0, return -1.
         if (len === 0) {
           return -1;
         }
-
-        // 5. If argument fromIndex was passed let n be
-        //    ToInteger(fromIndex); else let n be 0.
         var n = +fromIndex || 0;
-
         if (Math.abs(n) === Infinity) {
           n = 0;
         }
-
-        // 6. If n >= len, return -1.
         if (n >= len) {
           return -1;
         }
-
-        // 7. If n >= 0, then Let k be n.
-        // 8. Else, n<0, Let k be len - abs(n).
-        //    If k is less than 0, then let k be 0.
         k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-
-        // 9. Repeat, while k < len
         while (k < len) {
-          // a. Let Pk be ToString(k).
-          //   This is implicit for LHS operands of the in operator
-          // b. Let kPresent be the result of calling the
-          //    HasProperty internal method of o with argument Pk.
-          //   This step can be combined with c
-          // c. If kPresent is true, then
-          //    i.  Let elementK be the result of calling the Get
-          //        internal method of o with the argument ToString(k).
-          //   ii.  Let same be the result of applying the
-          //        Strict Equality Comparison Algorithm to
-          //        searchElement and elementK.
-          //  iii.  If same is true, return k.
           if (k in o && o[k] === searchElement) {
             return k;
           }
@@ -84,16 +55,23 @@
       obj.selected = [];
       this.select = {
         createElems: function () {
+          var self = this;
           obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input placeholder="' + settings.placeholder + '" class="search-input" type="text"></li></ul></div>').appendTo(obj);
           obj.selectOptions = $('<div class="select-options"></div>').appendTo(obj);
           obj.selectOptionsDiv = $('<div class="select-options-padding"><span>推荐标签：</span></div>').appendTo(obj.selectOptions);
           this.createLi(settings.options);
           this.addEvent();
+          //init selected
+          if (settings.selected.length) {
+            $(settings.selected).each(function (index2, element2) {
+              self.addSelected(element2);
+            });
+          }
         },
 
         createLi: function (arr) {
           $(arr).each(function (index, element) {
-            $('<span class="select-option">' + element + '</span>').appendTo(obj.selectOptionsDiv);
+            $('<span data-id="' + element.id + '" class="select-option">' + element.name + '</span>').appendTo(obj.selectOptionsDiv);
           });
         },
 
@@ -104,7 +82,11 @@
           searchInput.oldValue = '';
           $('.select-options-padding').delegate(".select-option", "click", function () {
             var _self = $(this);
-            self.addSelected(_self.html());
+            self.addSelected({
+                name: _self.html(),
+                id: _self.data('id')
+              }
+            );
             $(searchInput).val('');
           });
 
@@ -113,7 +95,8 @@
             var _self = $(this);
             var selectedText = _self.prev().html();
             _self.parent().remove();
-            obj.selected.splice(obj.selected.indexOf(selectedText), 1);
+            self.delSelected(selectedText);
+            //obj.selected.splice(obj.selected.indexOf(selectedText), 1);
             self.togglePlaceholder();
             self.openOptions();
           });
@@ -125,7 +108,10 @@
               searchInput.parent().prev().find('.select-cancel').click();
               self.openOptions();
             } else if (value && (e.keyCode == 13 || e.keyCode == 32)) {
-              self.addSelected(value);
+              self.addSelected({
+                name: value,
+                id: null
+              });
               searchInput.val('');
             }
           });
@@ -135,8 +121,8 @@
             var value = $.trim(searchInput.val());
             if (value.length > settings.singleLength) {
               value = value.substr(0, settings.singleLength);
+              searchInput.val(value);
             }
-            searchInput.val(value);
             if (value !== searchInput.oldValue) {
               searchInput.oldValue = value;
               if (settings.callback) {
@@ -169,19 +155,43 @@
         isLimit: function () {
           if ($('.selected-options', obj).find('li').length === settings.limit + 1) {
             console.log('selected options beyond limit');
-            return false;
+            return true;
           }
-          return true;
+          return false;
         },
 
-        addSelected: function (text) {
-          if (this.isLimit() && obj.selected.indexOf(text) === -1) {
-            obj.selected.push(text);
-            $('.search-input-wrap', obj).before('<li><p>' + text + '</p><p class="select-cancel">&nbsp;X</p></li>');
-          } else {
-            console.log('This tag has added OR beyond limit');
+        addSelected: function (data) {
+          if (this.isLimit()) {
+            console.log('This tag beyond limit');
+            return false;
           }
+
+          var isSelected = false;
+          $(obj.selected).each(function (index, element) {
+            if (element.name === data.name) {
+              isSelected = true;
+              console.log('This tag has added');
+              return false;
+            }
+          });
+
+          if (isSelected) {
+            return false
+          }
+
+          obj.selected.push(data);
+          $('.search-input-wrap', obj).before('<li><p>' + data.name + '</p><p class="select-cancel">&nbsp;X</p></li>');
           this.togglePlaceholder();
+        },
+
+        delSelected: function (text) {
+          $(obj.selected).each(function (index, element) {
+            if (element.name === text) {
+              obj.selected.splice(index, 1);
+              console.log(text + ' has added');
+              return false;
+            }
+          });
         },
 
         setOptions: function (options) {

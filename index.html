@@ -27,13 +27,28 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var hehe = function (data) {
-//            console.log(data);
+            console.log(data);
 //            $('.demo')[0].select.addOptions([data]);
         };
         $('.demo:eq(0)').Select2({
             containerSelector: '..demo:eq(0)',
             placeholder: '输入二级分类，每个分类最多四个字，空格分割，最多写五个',
-            options: ['元素1内', '2添加内', '3添加内', '4加内内', '5内内内', '6素加内', '元7后添'],
+            selected: [
+                {name: '方的负2', id: 2},
+                {name: '方的负3', id: 3},
+                {name: '方的负8', id: 8}
+            ],
+            options: [
+                {name: '方的负1', id: 1},
+                {name: '方的负2', id: 2},
+                {name: '方的负3', id: 3},
+                {name: '方的负5', id: 5},
+                {name: '方的负8', id: 8},
+                {name: '方的负11', id: 11},
+                {name: '方的负13', id: 13},
+                {name: '方的负16', id: 16},
+                {name: '方的负18', id: 18}
+            ],
             callback: hehe,
             callbackTimer: 300
         });
