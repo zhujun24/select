@@ -43,15 +43,16 @@
           //init selected
           if (settings.selected.length) {
             obj.placeholder.addClass('hide');
-            $(settings.selected).each(function (index, element) {
-              self.addSelected(element);
-              $('.select-options>li', obj).each(function (index2, element2) {
-                if ($(element2).data('id') === element.id) {
-                  $(element2).addClass('selected');
-                  return false;
-                }
-              });
-            });
+            self.setSelected(settings.selected);
+            //$(settings.selected).each(function (index, element) {
+            //  self.addSelected(element);
+            //  $('.select-options>li', obj).each(function (index2, element2) {
+            //    if ($(element2).data('id') === element.id) {
+            //      $(element2).addClass('selected');
+            //      return false;
+            //    }
+            //  });
+            //});
           }
         },
 
@@ -144,6 +145,31 @@
 
         getOptions: function () {
           return obj.selected;
+        },
+
+        setSelected: function (arr) {
+          var _self = this;
+          obj.selected = [];
+          //clear selected
+          $('.selected-options', obj).find('li').remove();
+          //add selected array
+          $(arr).each(function (index, element) {
+            _self.addSelected(element);
+          });
+          //render select options
+          $('.select-options>li', obj).each(function (index2, element2) {
+            var isSelected = false;
+            $(arr).each(function (index, element) {
+              if ($(element2).data('id') === element.id) {
+                isSelected = true;
+              }
+            });
+            if (isSelected) {
+              $(element2).addClass('selected');
+            } else {
+              $(element2).removeClass('selected');
+            }
+          });
         },
 
         init: function () {

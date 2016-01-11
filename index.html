@@ -18,6 +18,7 @@
 <body>
 <div class="demo"></div>
 <button onclick="console.log($('.demo')[0].select.getOptions());">getOptions</button>
+<button onclick="console.log($('.demo')[0].select.setSelected([{name:'方的负1',id:1}]));">setSelected</button>
 <script src="//cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
 <script src="select.js"></script>
 <script type="text/javascript">
@@ -25,7 +26,7 @@
         $('.demo:eq(0)').Select1({
             containerSelector: '.demo:eq(0)',
             selected: [
-                {name: '方的负2', id: 2},
+                {name: '方的负3', id: 3},
                 {name: '方的负6', id: 6}
             ],
             options: [
