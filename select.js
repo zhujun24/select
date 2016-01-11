@@ -14,8 +14,8 @@
       ],
       callback: null,
       callbackTimer: 0,
-      limit: 99,
-      singleLength: 4444
+      limit: 0,
+      singleLength: 0
     }, options);
 
     // For IE7/8 Array indexOf
@@ -146,7 +146,8 @@
         inputChange: function () {
           var searchInput = $('.search-input', obj);
           var value = $.trim(searchInput.val());
-          if (value.length > settings.singleLength) {
+          var maxLength = settings.singleLength ? settings.singleLength : false;
+          if (maxLength && value.length > settings.singleLength) {
             value = value.substr(0, settings.singleLength);
             searchInput.val(value);
           }
@@ -184,6 +185,9 @@
         },
 
         isLimit: function () {
+          if (!settings.limit) {
+            return false;
+          }
           if ($('.selected-options', obj).find('li').length === settings.limit + 1) {
             console.log('selected options beyond limit');
             return true;
