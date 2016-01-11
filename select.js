@@ -169,12 +169,13 @@
 
         inputAutoWidth: function (input, restWidth) {
           var input = $(input);
+          var value = input.val() || '';
           var span = $('<span/>').css({
             display: 'none',
             fontSize: input.css('fontSize'),
             fontFamily: input.css('fontFamily')
           }).appendTo('body');
-          span.html(input.val().replace(/&/g, '&amp;').replace(/\s/g, '&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+          span.html(value.replace(/&/g, '&amp;').replace(/\s/g, '&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
           input.width(span.width() + (restWidth || 1));
           if (!span.width()) {
             this.togglePlaceholder();
