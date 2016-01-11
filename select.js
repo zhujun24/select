@@ -42,13 +42,12 @@
           this.addEvent();
           //init selected
           if (settings.selected.length) {
-            $('.select-options>li', obj).each(function (index, element) {
-              var _self = $(element);
-              var _selfId = _self.data('id');
-              $(settings.selected).each(function (index2, element2) {
-                if (element2.id === _selfId) {
-                  _self.click();
-                  self.closeOptions();
+            obj.placeholder.addClass('hide');
+            $(settings.selected).each(function (index, element) {
+              self.addSelected(element);
+              $('.select-options>li', obj).each(function (index2, element2) {
+                if ($(element2).data('id') === element.id) {
+                  $(element2).addClass('selected');
                   return false;
                 }
               });
