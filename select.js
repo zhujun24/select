@@ -57,6 +57,7 @@
         createElems: function () {
           var self = this;
           obj.searchInputTimer = null;
+          obj.oldValue = '';
           obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input placeholder="' + settings.placeholder + '" class="search-input" type="text"></li></ul></div>').appendTo(obj);
           obj.selectOptions = $('<div class="select-options"></div>').appendTo(obj);
           obj.selectOptionsDiv = $('<div class="select-options-padding"><span>推荐标签：</span></div>').appendTo(obj.selectOptions);
@@ -78,7 +79,6 @@
           //options click
           var self = this;
           var searchInput = $('.search-input', obj);
-          searchInput.oldValue = '';
           $('.select-options-padding').delegate(".select-option", "click", function () {
             var _self = $(this);
             self.addSelected({
@@ -153,8 +153,8 @@
             searchInput.val(value);
           }
           //input callback
-          if (value !== searchInput.oldValue) {
-            searchInput.oldValue = value;
+          if (value !== obj.oldValue) {
+            obj.oldValue = value;
             if (settings.callback) {
               if (settings.callbackTimer) {
                 clearTimeout(obj.searchInputTimer);
