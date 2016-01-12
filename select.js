@@ -4,14 +4,7 @@
       containerSelector: '',
       placeholder: 'Please enter...',
       selected: [],
-      options: [
-        {name: '方的负1', id: 1},
-        {name: '方的负2', id: 2},
-        {name: '方的负3', id: 3},
-        {name: '方的负13', id: 13},
-        {name: '方的负16', id: 16},
-        {name: '方的负18', id: 18}
-      ],
+      options: [],
       callback: null,
       callbackTimer: 0,
       limit: 0,
