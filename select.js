@@ -217,6 +217,9 @@
         setOptions: function (options) {
           obj.selectOptionsDiv.find('.select-option').remove();
           this.createLi(options);
+          if ($('.select-options', obj).css('height') !== '0px') {
+            this.openOptions();
+          }
         },
 
         getOptions: function () {
