@@ -56,6 +56,7 @@
       this.select = {
         createElems: function () {
           var self = this;
+          obj.searchInputTimer = null;
           obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input placeholder="' + settings.placeholder + '" class="search-input" type="text"></li></ul></div>').appendTo(obj);
           obj.selectOptions = $('<div class="select-options"></div>').appendTo(obj);
           obj.selectOptionsDiv = $('<div class="select-options-padding"><span>推荐标签：</span></div>').appendTo(obj.selectOptions);
@@ -85,7 +86,7 @@
                 id: _self.data('id')
               }
             );
-            //$(searchInput).val('');
+            clearTimeout(obj.searchInputTimer);
             self.inputAutoWidth(searchInput);
           });
 
@@ -102,7 +103,6 @@
 
           //input backspace & enter when value is null
           searchInput.keydown(function (e) {
-            self.inputChange();
             var value = $.trim(searchInput.val());
             if (!value && e.keyCode == 8) {
               var prevObj = searchInput.parent().prev();
@@ -117,6 +117,7 @@
                 name: value,
                 id: null
               });
+              clearTimeout(obj.searchInputTimer);
               searchInput.val('');
               self.inputAutoWidth(this);
               return false;
@@ -156,8 +157,8 @@
             searchInput.oldValue = value;
             if (settings.callback) {
               if (settings.callbackTimer) {
-                clearTimeout(searchInput.timer);
-                searchInput.timer = setTimeout(function () {
+                clearTimeout(obj.searchInputTimer);
+                obj.searchInputTimer = setTimeout(function () {
                   settings.callback(value);
                 }, settings.callbackTimer);
               } else {
