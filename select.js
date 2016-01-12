@@ -173,6 +173,7 @@
               $(element2).removeClass('selected');
             }
           });
+          arr.length && obj.placeholder.addClass('hide');
         },
 
         init: function () {
