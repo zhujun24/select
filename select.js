@@ -52,7 +52,6 @@
 
     this.each(function () {
       var obj = $(this);
-      obj.selected = [];
       this.select = {
         createElems: function () {
           var self = this;
@@ -95,10 +94,11 @@
             var _self = $(this);
             var selectedText = _self.prev().html();
             _self.parent().remove();
-            if (obj.selected.length === 1) {
+            var selected = self.getOptions();
+            if (!selected.length) {
               self.togglePlaceholder(true);
             }
-            self.delSelected(selectedText);
+            self.inputAutoWidth();
           });
 
           //input backspace & enter when value is null
@@ -179,6 +179,7 @@
           }).appendTo('body');
           span.html(value.replace(/&/g, '&amp;').replace(/\s/g, '&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
           input.width(span.width() + (restWidth || 1));
+          console.log(span.width());
           if (!span.width()) {
             this.togglePlaceholder();
           }
@@ -203,7 +204,8 @@
           }
 
           var isSelected = false;
-          $(obj.selected).each(function (index, element) {
+          var selected = this.getOptions();
+          $(selected).each(function (index, element) {
             if (element.name === data.name) {
               isSelected = true;
               console.log('This tag has added');
@@ -215,19 +217,8 @@
             return false
           }
 
-          obj.selected.push(data);
-          $('.search-input-wrap', obj).before('<li><p>' + data.name + '</p><p class="select-cancel">&nbsp;X</p></li>');
+          $('.search-input-wrap', obj).before('<li><p data-id="' + data.id + '">' + data.name + '</p><p class="select-cancel">&nbsp;X</p></li>');
           this.togglePlaceholder();
-        },
-
-        delSelected: function (text) {
-          $(obj.selected).each(function (index, element) {
-            if (element.name === text) {
-              obj.selected.splice(index, 1);
-              return false;
-            }
-          });
-          this.inputAutoWidth();
         },
 
         setOptions: function (options) {
@@ -237,7 +228,15 @@
         },
 
         getOptions: function () {
-          return obj.selected;
+          var selected = [];
+          $('li.search-input-wrap', obj).prevAll().each(function (index, element) {
+            var p = $(element).find('p:eq(0)');
+            selected.push({
+              name: p.html(),
+              id: p.data('id')
+            });
+          });
+          return selected;
         },
 
         openOptions: function () {
@@ -257,7 +256,8 @@
         },
 
         togglePlaceholder: function (hehe) {
-          if (obj.selected.length && !hehe) {
+          var selected = this.getOptions();
+          if (selected.length && !hehe) {
             $('.search-input', obj).attr('placeholder', '');
           } else {
             $('.search-input', obj).width(468).attr('placeholder', settings.placeholder);
@@ -266,8 +266,7 @@
 
         setSelected: function (arr) {
           var _self = this;
-          obj.selected = [];
-          $('.search-input-wrap', obj).prevAll().remove();
+          $('li.search-input-wrap', obj).prevAll().remove();
           $(arr).each(function (index, element) {
             _self.addSelected(element);
             _self.inputAutoWidth($('.search-input', obj));
