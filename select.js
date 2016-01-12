@@ -115,7 +115,7 @@
             } else if (value && (e.keyCode == 13 || e.keyCode == 32)) {
               self.addSelected({
                 name: value,
-                id: null
+                id: ''
               });
               clearTimeout(obj.searchInputTimer);
               searchInput.val('');
