@@ -18,6 +18,9 @@
 <body>
 <div class="demo"></div>
 <button onclick="console.log($('.demo')[0].select.getOptions());">getOptions</button>
+<button onclick="console.log($('.demo')[0].select.setOptions([{name: '方的负1', id: 1},{name: '方的负2', id: 2},{name: '方的负3', id: 3},{name: '方的负4', id: 4},{name: '方的负5', id: 5},{name: '方的负6', id: 6},{name: '方的负7', id: 7},{name: '方的负8', id: 8},{name: '方的负9', id: 9},{name: '方的负10', id: 10},{name: '方的负11', id: 11},{name: '方的负12', id: 12},{name: '方的负13', id: 13},{name: '方的负14', id: 14},{name: '方的负15', id: 15},{name: '方的负16', id: 16},{name: '方的负17', id: 17},{name: '方的负18', id: 18}]));">
+    setOptions
+</button>
 <button onclick="console.log($('.demo')[0].select.setSelected([{name:'方的负1',id:1}]));">setSelected</button>
 <script src="//cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
 <script src="select.js"></script>
@@ -29,26 +32,7 @@
                 {name: '方的负3', id: 3},
                 {name: '方的负6', id: 6}
             ],
-            options: [
-                {name: '方的负1', id: 1},
-                {name: '方的负2', id: 2},
-                {name: '方的负3', id: 3},
-                {name: '方的负4', id: 4},
-                {name: '方的负5', id: 5},
-                {name: '方的负6', id: 6},
-                {name: '方的负7', id: 7},
-                {name: '方的负8', id: 8},
-                {name: '方的负9', id: 9},
-                {name: '方的负10', id: 10},
-                {name: '方的负11', id: 11},
-                {name: '方的负12', id: 12},
-                {name: '方的负13', id: 13},
-                {name: '方的负14', id: 14},
-                {name: '方的负15', id: 15},
-                {name: '方的负16', id: 16},
-                {name: '方的负17', id: 17},
-                {name: '方的负18', id: 18}
-            ],
+            options: [],
             limit: 2
         });
         setInterval(function () {

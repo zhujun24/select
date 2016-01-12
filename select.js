@@ -3,57 +3,44 @@
     var settings = $.extend({
       containerSelector: '',
       selected: [],
-      options: [
-        {name: '方的负1', id: 1},
-        {name: '方的负2', id: 2},
-        {name: '方的负3', id: 3},
-        {name: '方的负4', id: 4},
-        {name: '方的负5', id: 5},
-        {name: '方的负6', id: 6},
-        {name: '方的负7', id: 7},
-        {name: '方的负8', id: 8},
-        {name: '方的负9', id: 9},
-        {name: '方的负10', id: 10},
-        {name: '方的负11', id: 11},
-        {name: '方的负12', id: 12}
-      ],
+      options: [],
       limit: 0
     }, options);
 
     this.each(function () {
       var obj = $(this);
-      obj.selected = [];
       this.select = {
         createElems: function () {
           var self = this;
           $('<div class="select-content"><ul class="selected-options"></ul><div class="switch"><div></div></div></div>').appendTo(obj);
           obj.selectOptionsUl = $('<ul class="select-options"></ul>').appendTo(obj);
           obj.placeholder = $('<p class="placeholder">选择云单分类，最多选两个</p>').appendTo('.selected-options', obj);
-          $(settings.options).each(function (index, element) {
-            var remain = index % 3;
-            var liCls = '';
-            if (remain === 0) {
-              liCls = 'left';
-            } else if (remain === 2) {
-              liCls = 'right';
-            }
-            $('<li data-id="' + element.id + '" class="' + liCls + '">' + element.name + '</li>').appendTo(obj.selectOptionsUl);
-          });
+          this.createLi(settings.options);
           this.addEvent();
           //init selected
           if (settings.selected.length) {
             obj.placeholder.addClass('hide');
             self.setSelected(settings.selected);
-            //$(settings.selected).each(function (index, element) {
-            //  self.addSelected(element);
-            //  $('.select-options>li', obj).each(function (index2, element2) {
-            //    if ($(element2).data('id') === element.id) {
-            //      $(element2).addClass('selected');
-            //      return false;
-            //    }
-            //  });
-            //});
           }
+        },
+
+        createLi: function (arr) {
+          var selected = this.getOptions();
+          $(arr).each(function (index, element) {
+            var remain = index % 3;
+            var liCls = '';
+            if (remain === 0) {
+              liCls = 'left ';
+            } else if (remain === 2) {
+              liCls = 'right ';
+            }
+            $(selected).each(function (index2, element2) {
+              if (element.id === element2.id) {
+                liCls += 'selected';
+              }
+            });
+            $('<li data-id="' + element.id + '" class="' + liCls + '">' + element.name + '</li>').appendTo(obj.selectOptionsUl);
+          });
         },
 
         addEvent: function () {
@@ -68,7 +55,8 @@
             if (_self.hasClass('selected')) {
               _self.removeClass('selected');
               self.removeSelected(data);
-              if (!obj.selected.length) {
+              var selected = self.getOptions();
+              if (!selected.length) {
                 obj.placeholder.removeClass('hide');
               }
             } else {
@@ -115,15 +103,13 @@
         },
 
         addSelected: function (data) {
-          $('.selected-options', obj).append('<li>' + data.name + '</li>');
-          obj.selected.push(data);
+          $('.selected-options', obj).append('<li data-id="' + data.id + '">' + data.name + '</li>');
         },
 
         removeSelected: function (data) {
           $('.selected-options>li', obj).each(function (index, element) {
             if ($(element).html() === data.name) {
               $(element).remove();
-              obj.selected.splice(index, 1);
               return false;
             }
           });
@@ -146,13 +132,25 @@
           }, 300);
         },
 
+        setOptions: function (options) {
+          obj.selectOptionsUl.empty();
+          this.createLi(options);
+        },
+
         getOptions: function () {
-          return obj.selected;
+          var selected = [];
+          $('.selected-options>li', obj).each(function (index, element) {
+            var li = $(element);
+            selected.push({
+              name: li.html(),
+              id: li.data('id')
+            });
+          });
+          return selected;
         },
 
         setSelected: function (arr) {
           var _self = this;
-          obj.selected = [];
           //clear selected
           $('.selected-options', obj).find('li').remove();
           //add selected array
