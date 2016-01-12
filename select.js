@@ -217,7 +217,6 @@
         setOptions: function (options) {
           obj.selectOptionsDiv.find('.select-option').remove();
           this.createLi(options);
-          this.openOptions();
         },
 
         getOptions: function () {
