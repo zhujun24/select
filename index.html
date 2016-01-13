@@ -36,16 +36,12 @@
         $('.demo:eq(0)').Select2({
             containerSelector: '..demo:eq(0)',
             placeholder: '输入二级分类，每个分类最多四个字，空格分割，最多写五个',
-            selected: [
-                {name: '方的负2', id: 2},
-                {name: '方的负3', id: 3},
-                {name: '方的负8', id: 8}
-            ],
+            selected: [],
             options: [],
             callback: hehe,
-            callbackTimer: 300,
+            callbackTimer: 0,
             limit: 5,
-            singleLength: 10
+            singleLength: 4
         });
     });
 </script>

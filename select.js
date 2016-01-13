@@ -48,6 +48,7 @@
       this.select = {
         createElems: function () {
           var self = this;
+          obj.searchInputLock = false;
           obj.searchInputTimer = null;
           obj.oldValue = '';
           obj.selectContent = $('<div class="select-content"><ul class="selected-options"><li class="search-input-wrap"><input placeholder="' + settings.placeholder + '" class="search-input" type="text"></li></ul></div>').appendTo(obj);
@@ -71,6 +72,13 @@
           //options click
           var self = this;
           var searchInput = $('.search-input', obj);
+          //非直接的文字输入
+          searchInput.bind('compositionstart', function () {
+            obj.searchInputLock = true;
+          });
+          searchInput.bind('compositionend', function () {
+            obj.searchInputLock = false;
+          });
           $('.select-options-padding').delegate(".select-option", "click", function () {
             var _self = $(this);
             self.addSelected({
@@ -119,6 +127,9 @@
 
           //update input width
           searchInput.bind('input propertychange', function () {
+            if (obj.searchInputLock) {
+              return false;
+            }
             self.inputChange();
           });
 
@@ -172,7 +183,6 @@
           }).appendTo('body');
           span.html(value.replace(/&/g, '&amp;').replace(/\s/g, '&nbsp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
           input.width(span.width() + (restWidth || 1));
-          console.log(span.width());
           if (!span.width()) {
             this.togglePlaceholder();
           }
@@ -195,7 +205,6 @@
             console.log('This tag beyond limit');
             return false;
           }
-
           var isSelected = false;
           var selected = this.getOptions();
           $(selected).each(function (index, element) {
@@ -205,11 +214,9 @@
               return false;
             }
           });
-
           if (isSelected) {
-            return false
+            return false;
           }
-
           $('.search-input-wrap', obj).before('<li><p data-id="' + data.id + '">' + data.name + '</p><p class="select-cancel">&nbsp;X</p></li>');
           this.togglePlaceholder();
         },
