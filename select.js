@@ -86,6 +86,7 @@
                 id: _self.data('id')
               }
             );
+            self.addRest();
             clearTimeout(obj.searchInputTimer);
             self.inputAutoWidth(searchInput);
           });
@@ -145,7 +146,20 @@
             } else {
               self.closeOptions();
             }
+            self.addRest();
           });
+        },
+
+        addRest: function () {
+          var searchInput = $('.search-input', obj);
+          var value = $.trim(searchInput.val());
+          if (value) {
+            this.addSelected({
+              name: value,
+              id: ''
+            });
+            searchInput.val('');
+          }
         },
 
         inputChange: function () {
