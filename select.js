@@ -289,12 +289,6 @@
           });
         },
 
-        resetSelected: function (arr) {
-          var _self = this;
-          $('.select-content .select-cancel').click();
-          _self.setSelected(arr);
-        },
-
         init: function () {
           var O = this;
           O.createElems();
